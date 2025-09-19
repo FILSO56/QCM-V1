@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz avancé - Les Baies (QCM)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+    }
+    #game img {
+      max-width: 90%;
+      height: auto;
+      margin: 10px 0;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    button {
+      display: block;
+      width: 80%;
+      max-width: 300px;
+      margin: 8px auto;
+      padding: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #4CAF50;
+      color: white;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .progress {
+      background: #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 10px;
+      margin: 20px 0;
+    }
+    .progress div {
+      height: 10px;
+      background: #4CAF50;
+      width: 0;
+    }
+    .explanation {
+      margin-top: 12px;
+      font-style: italic;
+      color: #333;
+    }
+    #game {
+      transition: opacity 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <img src="baies.jpg" alt="Illustration baies">
+    <h1>Quiz Expert - Les Baies</h1>
+    <p>20 questions en QCM pour tester tes connaissances avancées 🌿</p>
+    <button onclick="startGame()">Commencer</button>
+  </div>
+
+<script>
+const quiz1 = [
+  { q: "Le fruit du caféier est...", options: ["Une drupe", "Une baie", "Un akène"], correct: 1, exp: "Le fruit du caféier est une baie appelée « cerise de café ».", img: "cafe.jpg" },
+  { q: "Le poivron est...", options: ["Une drupe", "Une baie", "Un follicule"], correct: 1, exp: "Le poivron, comme la tomate, est une baie botanique.", img: "poivron.jpg" },
+  { q: "Le grenadier produit...", options: ["Une péponide", "Une balaustion", "Une baie classique"], correct: 1, exp: "Le fruit du grenadier est une balaustion, pas une péponide.", img: "grenade.jpg" },
+  { q: "Chez le raisin, la pellicule contient...", options: ["Amidon", "Anthocyanes et tanins", "Chlorophylle"], correct: 1, exp: "La pellicule du raisin contient anthocyanes et tanins, essentiels pour la vinification.", img: "raisin.jpg" },
+  { q: "La pomme est...", options: ["Une baie", "Un fruit complexe", "Une drupe"], correct: 1, exp: "La pomme est un fruit complexe issu du réceptacle floral.", img: "pomme.jpg" },
+  { q: "La banane cultivée est...", options: ["Une drupe", "Une baie parthénocarpique", "Un akène"], correct: 1, exp: "La banane cultivée est une baie parthénocarpique sans graines fertiles.", img: "banane.jpg" },
+  { q: "Le concombre est...", options: ["Un akène", "Une péponide", "Une drupe"], correct: 1, exp: "Le concombre est une péponide, un sous-type de baie.", img: "concombre.jpg" },
+  { q: "Le poivre noir (Piper nigrum) est...", options: ["Une graine séchée", "Une petite baie séchée", "Un fruit sec déhiscent"], correct: 1, exp: "Le poivre noir est une petite baie récoltée puis séchée.", img: "poivre.jpg" },
+  { q: "Le fruit de l’aubergine est...", options: ["Une drupe", "Une baie", "Un follicule"], correct: 1, exp: "L’aubergine est une baie charnue, comme la tomate.", img: "aubergine.jpg" },
+  { q: "La tomate cerise et la tomate classique sont...", options: ["De nature différente", "Toutes deux des baies", "Un akène et une drupe"], correct: 1, exp: "Tomate cerise et tomate classique sont toutes deux des baies.", img: "tomate.jpg" }
+];
+
+const quiz2 = [
+  { q: "Les baies du lierre sont...", options: ["Comestibles", "Toxiques", "Utilisées en confiture"], correct: 1, exp: "Les baies du lierre sont toxiques.", img: "lierre.jpg" },
+  { q: "En France, la cueillette de baies sauvages est...", options: ["Toujours libre", "Réglementée par le Code forestier", "Interdite partout"], correct: 1, exp: "La cueillette est réglementée par le Code forestier.", img: "sauvage.jpg" },
+  { q: "Les baies de la belladone deviennent...", options: ["Rouges toxiques", "Noires toxiques", "Bleues comestibles"], correct: 1, exp: "Les baies de belladone deviennent noires et sont très toxiques.", img: "belladone.jpg" },
+  { q: "Les baies de sureau noir sont...", options: ["Comestibles crues", "Toxiques crues mais comestibles cuites", "Toujours toxiques"], correct: 1, exp: "Les baies de sureau noir doivent être cuites pour être consommées.", img: "sureau.jpg" },
+  { q: "Les arilles rouges de l’if sont...", options: ["Totalement comestibles", "Comestibles sauf la graine", "Toxiques même sans la graine"], correct: 1, exp: "Seule la pulpe rouge est comestible, la graine est mortelle.", img: "if.jpg" },
+  { q: "Les myrtilles sauvages sont...", options: ["Toujours libres de cueillette", "Parfois protégées régionalement", "Des fruits toxiques"], correct: 1, exp: "Les myrtilles sauvages sont protégées dans certaines régions.", img: "myrtille.jpg" },
+  { q: "Les baies du gui sont...", options: ["Comestibles", "Toxiques", "Utilisées en vin"], correct: 1, exp: "Les baies du gui sont translucides et toxiques.", img: "gui.jpg" },
+  { q: "La règle en cueillette est...", options: ["Tout cueillir", "Partager entre soi, animaux et plante", "Ne rien cueillir"], correct: 1, exp: "Prélever 1 spécimen sur 3 : 1 pour nous, 1 pour la plante pour lui permette de se regénérer et un pour les insectes ou les animaux qui en ont de besoin, notamment pour se nourrir.", img: "regle.jpg" },
+  { q: "Certaines baies toxiques...", options: ["Deviennent comestibles après cuisson", "Restent toxiques même après cuisson", "Ne sont jamais toxiques"], correct: 1, exp: "Certaines, comme les baies d’if, restent toxiques même cuites.", img: "toxique.jpg" },
+  { q: "Cueillir sur un terrain privé est...", options: ["Toujours autorisé", "Interdit sans autorisation", "Libre si non clôturé"], correct: 1, exp: "Il faut toujours l’autorisation du propriétaire.", img: "terrain.jpg" }
+];
+
+const allQuizzes = [quiz1, quiz2];
+let currentQuiz = 0;
+let index = 0;
+let score = 0;
+const gameDiv = document.getElementById("game");
+
+function startGame() {
+  currentQuiz = 0;
+  index = 0;
+  score = 0;
+  showQuestion();
+}
+
+function showQuestion() {
+  const quiz = allQuizzes[currentQuiz];
+  if (index < quiz.length) {
+    const progress = ((currentQuiz * quiz1.length + index) / (quiz1.length + quiz2.length)) * 100;
+    const q = quiz[index];
+    let optionsHtml = "";
+    q.options.forEach((opt, i) => {
+      optionsHtml += `<button onclick="answer(${i})">${opt}</button>`;
+    });
+    gameDiv.style.opacity = 0;
+    setTimeout(() => {
+      gameDiv.innerHTML = `
+        <h2>Question ${currentQuiz * quiz1.length + index + 1}</h2>
+        <p>${q.q}</p>
+        <img src="${q.img}" alt="Illustration">
+        ${optionsHtml}
+        <div id="explanation" class="explanation"></div>
+        <div class="progress"><div style="width:${progress}%"></div></div>
+      `;
+      gameDiv.style.opacity = 1;
+    }, 300);
+  } else {
+    if (currentQuiz === 0) showTransition();
+    else showResult();
+  }
+}
+
+function answer(choice) {
+  const quiz = allQuizzes[currentQuiz];
+  const q = quiz[index];
+  const explanationDiv = document.getElementById("explanation");
+  if (choice === q.correct) {
+    score++;
+    explanationDiv.innerHTML = "✅ Bonne réponse ! " + q.exp;
+  } else {
+    explanationDiv.innerHTML = "❌ Mauvaise réponse. " + q.exp;
+  }
+  setTimeout(() => {
+    index++;
+    showQuestion();
+  }, 3000);
+}
+
+function showTransition() {
+  gameDiv.innerHTML = `
+    <img src="cueillette.jpg" alt="Illustration cueillette">
+    <h2>👏 Bravo ! Première partie terminée</h2>
+    <p>Prêt(e) pour les bonnes pratiques et toxicologie ? 🌿</p>
+    <button onclick="startSecondQuiz()">Commencer la 2ᵉ partie</button>
+  `;
+}
+
+function startSecondQuiz() {
+  currentQuiz = 1;
+  index = 0;
+  showQuestion();
+}
+
+function showResult() {
+  const total = quiz1.length + quiz2.length;
+  const progress = 100;
+  gameDiv.style.opacity = 0;
+  setTimeout(() => {
+    gameDiv.innerHTML = `
+      <h2>🎉 Fin du jeu ! 🎉</h2>
+      <p>Ton score final : <strong>${score}/${total}</strong></p>
+      <p>${score >= 15 ? "Bravo, tu es un expert confirmé en baies ! 🏆" : "Pas mal, mais il reste des détails à approfondir 😉"}</p>
+      <button onclick="startGame()">Rejouer</button>
+      <div class="progress"><div style="width:${progress}%"></div></div>
+    `;
+    gameDiv.style.opacity = 1;
+  }, 300);
+}
+</script>
+</body>
+</html>
